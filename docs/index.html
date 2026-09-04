@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MutaTexto — Criptografia de Texto</title>
+<meta name="description" content="MutaTexto: aplicativo Android offline de criptografia de texto com AES-256-GCM, sem coleta de dados e sem anúncios.">
+<link rel="icon" type="image/png" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon-180.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+
+    <header class="hero">
+        <img src="assets/logo.png" alt="Ícone do MutaTexto">
+        <h1>MutaTexto</h1>
+        <p class="tagline">Criptografia de texto local, offline, sem coleta de dados.</p>
+    </header>
+
+    <div class="badge-row">
+        <span class="badge">AES-256-GCM</span>
+        <span class="badge">100% offline</span>
+        <span class="badge">Sem anúncios</span>
+        <span class="badge">Código aberto (MIT)</span>
+    </div>
+
+    <div class="btn-row">
+        <a class="btn primary" href="https://github.com/marlonms8/mutatexto">Ver no GitHub</a>
+        <a class="btn secondary" href="privacy.html">Política de Privacidade</a>
+        <a class="btn secondary" href="terms.html">Termos de Uso</a>
+    </div>
+
+    <div class="card">
+        <h2>O que é o MutaTexto</h2>
+        <p>
+            O MutaTexto é um aplicativo Android para criptografar e
+            descriptografar textos diretamente no aparelho, sem depender de
+            servidores, contas ou conexão com a Internet. O app nem sequer
+            solicita permissão de Internet — o processamento é 100% local.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Recursos</h2>
+        <ul class="feature-list">
+            <li><strong>Modo Moderno:</strong> AES-256-GCM, PBKDF2-HMAC-SHA256 (310.000 iterações), salt e IV aleatórios por mensagem, com autenticação integrada.</li>
+            <li><strong>Modo Legado:</strong> compatível com o formato Collura Decrypter v1.0, para interoperar com mensagens antigas.</li>
+            <li><strong>Privacidade real:</strong> nenhum dado é coletado, armazenado ou enviado a qualquer servidor.</li>
+            <li><strong>Sem anúncios, sem rastreamento, sem SDKs de terceiros.</strong></li>
+            <li><strong>Editor em tela cheia</strong> para textos longos, com contador de caracteres.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Código-fonte</h2>
+        <p>
+            O MutaTexto é distribuído sob licença MIT. O código completo,
+            incluindo a especificação técnica de ambos os esquemas de
+            criptografia, está disponível no repositório do projeto:
+        </p>
+        <p><a href="https://github.com/marlonms8/mutatexto">github.com/marlonms8/mutatexto</a></p>
+    </div>
+
+    <footer>
+        MutaTexto — <a href="privacy.html">Privacidade</a> · <a href="terms.html">Termos de Uso</a> · <a href="https://github.com/marlonms8/mutatexto">GitHub</a>
+    </footer>
+
+</div>
+</body>
+</html>
