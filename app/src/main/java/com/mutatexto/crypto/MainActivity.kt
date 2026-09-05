@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
@@ -35,6 +37,8 @@ class MainActivity : Activity() {
     private lateinit var modeModernButton: Button
     private lateinit var modeLegacyButton: Button
     private lateinit var modeHintText: TextView
+    private lateinit var loadingOverlay: View
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private var passwordVisible = false
     private var mode = CryptoMode.MODERN
@@ -53,6 +57,7 @@ class MainActivity : Activity() {
         modeModernButton = findViewById(R.id.modeModernButton)
         modeLegacyButton = findViewById(R.id.modeLegacyButton)
         modeHintText = findViewById(R.id.modeHintText)
+        loadingOverlay = findViewById(R.id.loadingOverlay)
 
         modeModernButton.setOnClickListener { setMode(CryptoMode.MODERN) }
         modeLegacyButton.setOnClickListener { setMode(CryptoMode.LEGACY) }
@@ -111,18 +116,18 @@ class MainActivity : Activity() {
             return
         }
 
-        val result = runCatching {
-            when (mode) {
-                CryptoMode.MODERN -> ModernCrypto.encrypt(text, password)
-                CryptoMode.LEGACY -> ColluraCrypto.encrypt(text, password)
-            }
-        }
-        result
-            .onSuccess {
+        runCryptoOperation(
+            operation = {
+                when (mode) {
+                    CryptoMode.MODERN -> ModernCrypto.encrypt(text, password)
+                    CryptoMode.LEGACY -> ColluraCrypto.encrypt(text, password)
+                }
+            },
+            onSuccess = {
                 resultText.setText(it)
                 showSuccess(getString(R.string.status_encrypted))
             }
-            .onFailure { showError(it.message ?: getString(R.string.error_generic)) }
+        )
     }
 
     private fun decrypt() {
@@ -140,18 +145,38 @@ class MainActivity : Activity() {
             return
         }
 
-        val result = runCatching {
-            when (mode) {
-                CryptoMode.MODERN -> ModernCrypto.decrypt(text, password)
-                CryptoMode.LEGACY -> ColluraCrypto.decrypt(text, password)
-            }
-        }
-        result
-            .onSuccess {
+        runCryptoOperation(
+            operation = {
+                when (mode) {
+                    CryptoMode.MODERN -> ModernCrypto.decrypt(text, password)
+                    CryptoMode.LEGACY -> ColluraCrypto.decrypt(text, password)
+                }
+            },
+            onSuccess = {
                 resultText.setText(it)
                 showSuccess(getString(R.string.status_decrypted))
             }
-            .onFailure { showError(it.message ?: getString(R.string.error_generic)) }
+        )
+    }
+
+    /**
+     * Executa a operação de criptografia/descriptografia em uma thread
+     * separada, exibindo um spinner sobre a tela enquanto isso acontece.
+     * Necessário mesmo sendo uma operação local: o Modo Moderno faz 310.000
+     * iterações de PBKDF2, o que pode levar alguns instantes perceptíveis
+     * em aparelhos mais fracos — sem isso, a tela travaria sem animação.
+     */
+    private fun runCryptoOperation(operation: () -> String, onSuccess: (String) -> Unit) {
+        loadingOverlay.visibility = View.VISIBLE
+        Thread {
+            val result = runCatching(operation)
+            mainHandler.post {
+                loadingOverlay.visibility = View.GONE
+                result
+                    .onSuccess(onSuccess)
+                    .onFailure { showError(it.message ?: getString(R.string.error_generic)) }
+            }
+        }.start()
     }
 
     private fun openPrivacyPolicy() {
